@@ -1,5 +1,7 @@
 import os
 import zipfile
+import argparse
+import sys
 import tkinter as tk
 from tkinter import scrolledtext
 from pathlib import PurePosixPath as Path
@@ -321,12 +323,20 @@ class EmulatorGUI:
             return "Unknown command."
 
 
-# Основной код
 if __name__ == "__main__":
-    username = "user1"
-    hostname = "my_pc"
-    zip_path = "virtual_fs.zip"
-    log_path = "emulator.log"
+    parser = argparse.ArgumentParser(description='Описание вашей программы')
+
+    parser.add_argument('--username', type=str, default='user1', help='Имя пользователя')
+    parser.add_argument('--hostname', type=str, default='my_pc', help='Имя хоста')
+    parser.add_argument('--zip-path', type=str, default='virtual_fs.zip', help='Путь к zip-файлу')
+    parser.add_argument('--log-path', type=str, default='emulator.log', help='Путь к файлу логов')
+
+    args = parser.parse_args()
+
+    username = args.username
+    hostname = args.hostname
+    zip_path = args.zip_path
+    log_path = args.log_path
 
     # Создаем объект эмулятора
     emulator = Emulator(username, hostname, zip_path, log_path)
