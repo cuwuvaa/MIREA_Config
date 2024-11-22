@@ -2,6 +2,7 @@ import os
 import zipfile
 import tkinter as tk
 from tkinter import scrolledtext
+from pathlib import PurePosixPath as Path
 
 
 class Emulator:
@@ -16,10 +17,12 @@ class Emulator:
         """
         self.username = username
         self.hostname = hostname
-        self.current_directory = 'virtual_fs'  # Текущая директория (начинаем с корня '/')
+        self.current_directory = '/'  # Текущая директория (начинаем с корня '/')
         self.zip_path = zip_path
         self.log_path = log_path
         self.file_system = {}  # Словарь для хранения распакованных файлов и папок
+        self.directories = set()  # Множество директорий
+        self.files = set()  # Множество файлов
         self._load_file_system()  # Распаковываем архив в память
 
     def _log(self, command, output):
@@ -46,10 +49,30 @@ class Emulator:
         """
         if zipfile.is_zipfile(self.zip_path):
             with zipfile.ZipFile(self.zip_path, 'r') as zip_ref:
+                self.file_system = {}
+                self.directories = set()
+                self.files = set()
+                self.directories.add('/')  # Добавляем корневую директорию
+
                 for file in zip_ref.namelist():
                     # Удаляем начальные / для удобства работы с файлами
-                    normalized_path = file.lstrip('/')
-                    self.file_system[normalized_path] = True  # Добавляем файлы и папки в словарь
+                    file = file.lstrip('/')
+                    normalized_path = '/' + file
+
+                    self.file_system[normalized_path] = True
+
+                    path_obj = Path(normalized_path)
+
+                    if normalized_path.endswith('/'):
+                        # Это директория
+                        self.directories.add(str(path_obj))
+                    else:
+                        # Это файл
+                        self.files.add(str(path_obj))
+
+                        # Добавляем все родительские директории
+                        for parent in path_obj.parents:
+                            self.directories.add(str(parent))
         else:
             print("Error: provided file is not a ZIP archive.")
 
@@ -58,23 +81,41 @@ class Emulator:
         Команда 'ls' выводит список файлов и папок в указанной директории (или текущей, если аргумент не передан).
         """
         if directory:
-            path = os.path.join(self.current_directory, directory).lstrip('/')
+            path_obj = Path(directory)
+            if path_obj.is_absolute():
+                path = path_obj
+            else:
+                path = (Path(self.current_directory) / path_obj)
         else:
-            path = self.current_directory.lstrip('/')
+            path = Path(self.current_directory)
 
-        output = []
-        found_files = False
-        for file in self.file_system:
-            if file.startswith(path):
-                relative_path = file[len(path):].strip('/')
-                if '/' not in relative_path:
-                    output.append(relative_path)
-                    found_files = True
+        str_path = str(path)
+        if str_path == '':
+            str_path = '/'
 
-        if not found_files:
-            output.append("Directory is empty.")
+        entries = set()
+        dir_prefix = str_path if str_path != '/' else ''
+        dir_prefix += '/'
 
-        # Печатаем и возвращаем результат команды
+        len_prefix = len(dir_prefix)
+        # Ищем непосредственных потомков в директориях
+        for d in self.directories:
+            if d.startswith(dir_prefix):
+                rest = d[len_prefix:]
+                if '/' not in rest and rest != '':
+                    entries.add(rest)
+        # Ищем файлы
+        for f in self.files:
+            if f.startswith(dir_prefix):
+                rest = f[len_prefix:]
+                if '/' not in rest:
+                    entries.add(rest)
+
+        if entries:
+            output = sorted(entries)
+        else:
+            output = ["Directory is empty."]
+
         response = '\n'.join(output)
         print(response)
         return response
@@ -87,17 +128,30 @@ class Emulator:
         """
         if path == "..":
             # Переход на уровень выше
-            if self.current_directory != '/':
-                self.current_directory = os.path.dirname(self.current_directory.rstrip('/')) + '/'
+            new_directory = Path(self.current_directory).parent
+            if str(new_directory) == '':
+                new_directory = Path('/')
         else:
             # Переход в указанную директорию
-            new_directory = os.path.join(self.current_directory, path).lstrip('/')
-            if any(f.startswith(new_directory) for f in self.file_system):
-                self.current_directory = new_directory.rstrip('/') + '/'
+            path_obj = Path(path)
+            if path_obj.is_absolute():
+                new_directory = path_obj
             else:
-                response = "Error: directory not found."
-                print(response)
-                return response
+                new_directory = Path(self.current_directory) / path_obj
+
+        # Нормализуем путь
+        new_directory = new_directory
+
+        str_new_directory = str(new_directory)
+        if str_new_directory == '':
+            str_new_directory = '/'
+
+        if str_new_directory in self.directories:
+            self.current_directory = str_new_directory
+        else:
+            response = "Error: directory not found."
+            print(response)
+            return response
         return ""
 
     def rmdir(self, path=None):
@@ -111,16 +165,22 @@ class Emulator:
             print(response)
             return response
 
-        full_path = os.path.join(self.current_directory, path).rstrip('/') + '/'
+        full_path = (Path(self.current_directory) / path).resolve()
+        str_full_path = str(full_path)
+        if str_full_path == '':
+            str_full_path = '/'
 
-        # Проверяем, есть ли в директории другие файлы
-        has_files = any(f.startswith(full_path) and f != full_path for f in self.file_system)
+        # Проверяем, есть ли в директории другие файлы или директории
+        has_entries = any(
+            f != str_full_path and f.startswith(str_full_path + '/')
+            for f in self.files.union(self.directories)
+        )
 
-        if has_files:
+        if has_entries:
             response = f"Error: directory '{path}' is not empty. Remove all files inside first."
-        elif full_path in self.file_system:
-            del self.file_system[full_path]  # Удаляем директорию из виртуальной файловой системы
-            self._remove_from_zip(full_path)  # Удаляем директорию из ZIP-архива
+        elif str_full_path in self.directories:
+            self.directories.remove(str_full_path)
+            self._remove_from_zip(str_full_path)  # Удаляем директорию из ZIP-архива
             response = f"Directory '{path}' has been removed."
         else:
             response = "Error: directory not found."
@@ -137,7 +197,8 @@ class Emulator:
             with zipfile.ZipFile(temp_zip, 'w') as new_zip:
                 for item in zip_ref.infolist():
                     # Проверяем, что файл или папка не совпадают с удаляемым
-                    if not item.filename.startswith(file_to_remove):
+                    normalized_item = '/' + item.filename.lstrip('/')
+                    if not normalized_item.startswith(file_to_remove + '/'):
                         new_zip.writestr(item, zip_ref.read(item.filename))
         # Заменяем старый архив новым
         os.replace(temp_zip, self.zip_path)
@@ -183,15 +244,16 @@ class EmulatorGUI:
                                                      state='disabled', font=("Consolas", 12))
         self.output_text.grid(row=0, column=0, padx=10, pady=10)
 
-
         # Область для отображения текущего хоста и директории (нередактируемая)
-        self.host_display = tk.Label(self.window, text=f"current directory: {emulator.username}@{emulator.hostname}:{emulator._get_prompt_directory()}$",
+        self.host_display = tk.Label(self.window,
+                                     text=f"{emulator.username}@{emulator.hostname}:{emulator._get_prompt_directory()}$",
                                      bg="black", fg="green", font=("Consolas", 12), anchor="w")
         self.host_display.grid(row=2, column=0, sticky='w', padx=10, pady=5)
 
         # Поле для ввода команд
         self.command_entry = tk.Entry(self.window, width=80, bg="black", fg="green", font=("Consolas", 12))
         self.command_entry.grid(row=1, column=0, padx=10, pady=5)
+        self.command_entry.focus_set()  # Фокус на поле ввода
 
         # Привязываем событие нажатия Enter
         self.command_entry.bind('<Return>', self.run_command)
@@ -203,28 +265,33 @@ class EmulatorGUI:
         """Обработчик ввода команды и её выполнения."""
         command = self.command_entry.get()
         self.output_text.config(state='normal')
-        self.output_text.insert(tk.END, f"{emulator.username}@{emulator.hostname}:{emulator._get_prompt_directory()}$ {command}\n")
+        self.output_text.insert(tk.END,
+                                f"{self.emulator.username}@{self.emulator.hostname}:{self.emulator._get_prompt_directory()}$ {command}\n")
         self.output_text.config(state='disabled')
-        with open(emulator.log_path, 'a') as log_file:
+        with open(self.emulator.log_path, 'a') as log_file:
             # Записываем ввод команды с текущим местоположением пользователя
-            log_file.write(f"{emulator.username}@{emulator.hostname}:{emulator._get_prompt_directory()}$ {command}\n")
+            log_file.write(
+                f"{self.emulator.username}@{self.emulator.hostname}:{self.emulator._get_prompt_directory()}$ {command}\n")
         self.command_entry.delete(0, tk.END)  # Очищаем поле ввода
 
         # Получаем результат команды из эмулятора
         output = self.execute_command(command)
-        with open(emulator.log_path, 'a') as log_file:
+        with open(self.emulator.log_path, 'a') as log_file:
             log_file.write(f"{output}\n")
         # Обновляем область вывода
 
-        self.host_display.config(text=f"current directory: {emulator.username}@{emulator.hostname}:{emulator._get_prompt_directory()}$")
+        self.host_display.config(
+            text=f"{self.emulator.username}@{self.emulator.hostname}:{self.emulator._get_prompt_directory()}$")
         self.host_display.update()
         self.output_text.config(state='normal')
-        self.output_text.insert(tk.END, f"{output}\n")
+        if output:
+            self.output_text.insert(tk.END, f"{output}\n")
         self.output_text.config(state='disabled')
         self.output_text.yview(tk.END)  # Прокрутка вниз
 
     def execute_command(self, command):
         """Метод для выполнения команд через эмулятор."""
+        command = command.strip()
         if command.startswith("ls"):
             args = command.split(" ")
             if len(args) == 2:
@@ -233,6 +300,8 @@ class EmulatorGUI:
                 return self.emulator.ls()
         elif command.startswith("cd "):
             return self.emulator.cd(command.split(" ")[1])
+        elif command == "cd":
+            return self.emulator.cd('/')
         elif command.startswith("rmdir"):
             args = command.split(" ")
             if len(args) == 2:

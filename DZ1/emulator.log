@@ -1,0 +1,263 @@
+user1@my_pc:virtual_fs$ ls
+
+root
+user1@my_pc:virtual_fs$ cd root
+Error: directory not found.
+user1@my_pc:virtual_fs$ cd root
+Error: directory not found.
+user1@my_pc:virtual_fs$ cd root
+Error: directory not found.
+user1@my_pc:virtual_fs$ cd /root
+Error: directory not found.
+user1@my_pc:virtual_fs$ ls
+
+root
+user1@my_pc:virtual_fs$ cd .root
+Error: directory not found.
+user1@my_pc:virtual_fs$ cd ..
+
+user1@my_pc:/$ ls
+virtual_fs
+user1@my_pc:/$ cd virtual_fs
+
+user1@my_pc:virtual_fs/$ ls
+
+root
+user1@my_pc:virtual_fs/$ cd root
+
+user1@my_pc:virtual_fs/root/$ ls
+
+users
+user1@my_pc:virtual_fs/root/$ cd users
+
+user1@my_pc:virtual_fs/root/users/$ ls
+
+user1@my_pc:virtual_fs$ ls
+
+root
+user1@my_pc:virtual_fs$ cd root
+Error: directory not found.
+user1@my_pc:virtual_fs$ ls
+
+root
+user1@my_pc:virtual_fs$ cd ..
+
+user1@my_pc:/$ ls
+virtual_fs
+user1@my_pc:/$ cd virtual_fs
+
+user1@my_pc:virtual_fs/$ ls
+
+root
+user1@my_pc:virtual_fs/$ cd root
+
+user1@my_pc:virtual_fs/root/$ ls
+
+users
+user1@my_pc:virtual_fs/root/$ cd users
+
+user1@my_pc:virtual_fs/root/users/$ ls
+
+user1@my_pc:virtual_fs$ ls
+
+home
+user1@my_pc:virtual_fs$ cd home
+Error: directory not found.
+user1@my_pc:virtual_fs$ ls
+
+home
+user1@my_pc:virtual_fs$ cd home
+Error: directory not found.
+user1@my_pc:virtual_fs$ cd virtual_fs
+Error: directory not found.
+user1@my_pc:virtual_fs$ ls
+
+home
+user1@my_pc:virtual_fs$ cd ..
+
+user1@my_pc:/$ ls
+virtual_fs
+user1@my_pc:/$ cd virtual_fs
+
+user1@my_pc:virtual_fs/$ ls
+
+home
+user1@my_pc:virtual_fs/$ cd home
+
+user1@my_pc:virtual_fs/home/$ ls
+
+cuwuvaa
+user1@my_pc:virtual_fs/home/$ cd cuwuvaa
+
+user1@my_pc:virtual_fs/home/cuwuvaa/$ ls
+
+.bashrc
+.bash_history
+.bash_logout
+.cache
+.java
+.landscape
+.lesshst
+.local
+.motd_shown
+.profile
+.sudo_as_admin_successful
+.viminfo
+amneziawg-go
+GitVisualizer
+git_dependency_visualizer.py
+MyGitRepo
+react
+script
+TestRepo
+user1@my_pc:virtual_fs/home/cuwuvaa/$ cd .java
+
+user1@my_pc:virtual_fs/home/cuwuvaa/.java/$ ls
+
+fonts
+user1@my_pc:virtual_fs/home/cuwuvaa/.java/$ cd fonts
+
+user1@my_pc:virtual_fs/home/cuwuvaa/.java/fonts/$ ls
+
+21.0.5
+user1@my_pc:virtual_fs/home/cuwuvaa/.java/fonts/$ cd 21.0.5
+
+user1@my_pc:virtual_fs/home/cuwuvaa/.java/fonts/21.0.5/$ ls
+
+fcinfo-1-HP-Ubuntu-24.04-en-.properties
+user1@my_pc:virtual_fs/home/cuwuvaa/.java/fonts/21.0.5/$ cd ..
+
+user1@my_pc:virtual_fs/home/cuwuvaa/.java/fonts/$ cd ..
+
+user1@my_pc:virtual_fs/home/cuwuvaa/.java/$ cd ..
+
+user1@my_pc:virtual_fs/home/cuwuvaa/$ ls
+
+.bashrc
+.bash_history
+.bash_logout
+.cache
+.java
+.landscape
+.lesshst
+.local
+.motd_shown
+.profile
+.sudo_as_admin_successful
+.viminfo
+amneziawg-go
+GitVisualizer
+git_dependency_visualizer.py
+MyGitRepo
+react
+script
+TestRepo
+user1@my_pc:virtual_fs/home/cuwuvaa/$ cd script
+
+user1@my_pc:virtual_fs/home/cuwuvaa/script/$ ls
+
+dependency_graph.png
+dependency_graph.uml
+git_dependency_visualizer.py
+user1@my_pc:virtual_fs/home/cuwuvaa/script/$ cd git_dependency_visualizer.py
+
+user1@my_pc:virtual_fs/home/cuwuvaa/script/git_dependency_visualizer.py/$ ls
+Directory is empty.
+user1@my_pc:virtual_fs/home/cuwuvaa/script/git_dependency_visualizer.py/$ cd ..
+
+user1@my_pc:virtual_fs/home/cuwuvaa/script/$ ls
+
+dependency_graph.png
+dependency_graph.uml
+git_dependency_visualizer.py
+user1@my_pc:virtual_fs/home/cuwuvaa/script/$ cd dd
+Error: directory not found.
+user1@my_pc:virtual_fs/home/cuwuvaa/script/$ ls
+
+dependency_graph.png
+dependency_graph.uml
+git_dependency_visualizer.py
+user1@my_pc:virtual_fs/home/cuwuvaa/script/$ cd dds
+Error: directory not found.
+user1@my_pc:virtual_fs/home/cuwuvaa/script/$ cd ..
+
+user1@my_pc:virtual_fs$ ls
+
+home
+user1@my_pc:virtual_fs$ cd home
+Error: directory not found.
+user1@my_pc:virtual_fs$ ls
+
+home
+user1@my_pc:/$ ls
+virtual_fs
+user1@my_pc:/$ cd virtual_fs
+
+user1@my_pc:/virtual_fs$ ls
+home
+user1@my_pc:/virtual_fs$ cd home
+
+user1@my_pc:/virtual_fs/home$ ls
+cuwuvaa
+user1@my_pc:/virtual_fs/home$ cd ..
+
+user1@my_pc:/virtual_fs$ cd ..
+
+user1@my_pc:/$ cd ..
+
+user1@my_pc:/$ ls
+virtual_fs
+user1@my_pc:/$ cd virtual_fs
+
+user1@my_pc:/virtual_fs$ ls
+home
+user1@my_pc:/virtual_fs$ cd home
+
+user1@my_pc:/virtual_fs/home$ ls
+cuwuvaa
+user1@my_pc:/virtual_fs/home$ cuwuvaa
+Unknown command.
+user1@my_pc:/virtual_fs/home$ cd cuwuvaa
+
+user1@my_pc:/virtual_fs/home/cuwuvaa$ ls
+.bash_history
+.bash_logout
+.bashrc
+.cache
+.java
+.landscape
+.lesshst
+.local
+.motd_shown
+.profile
+.sudo_as_admin_successful
+.viminfo
+GitVisualizer
+MyGitRepo
+TestRepo
+amneziawg-go
+git_dependency_visualizer.py
+react
+script
+user1@my_pc:/virtual_fs/home/cuwuvaa$ cd script
+
+user1@my_pc:/virtual_fs/home/cuwuvaa/script$ ls
+dependency_graph.png
+dependency_graph.uml
+git_dependency_visualizer.py
+user1@my_pc:/virtual_fs/home/cuwuvaa/script$ cd ..
+
+user1@my_pc:/virtual_fs/home/cuwuvaa$ cd ..
+
+user1@my_pc:/virtual_fs/home$ cd ..
+
+user1@my_pc:/virtual_fs$ ls
+home
+user1@my_pc:/virtual_fs$ cd home
+
+user1@my_pc:/virtual_fs/home$ ls
+cuwuvaa
+user1@my_pc:/virtual_fs/home$ cd ..
+
+user1@my_pc:/virtual_fs$ exit
+Exiting emulator...
