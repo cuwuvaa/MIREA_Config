@@ -1,0 +1,12 @@
+user4@serverok:/$ ls
+virtual_fs
+user4@serverok:/$ cd virtual_fs
+
+user4@serverok:/virtual_fs$ ls
+home
+user4@serverok:/virtual_fs$ cd home
+
+user4@serverok:/virtual_fs/home$ ls
+cuwuvaa
+user4@serverok:/virtual_fs/home$ exit
+Exiting emulator...

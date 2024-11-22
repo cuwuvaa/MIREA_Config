@@ -4,7 +4,7 @@ import argparse
 import sys
 import tkinter as tk
 from tkinter import scrolledtext
-from pathlib import PurePosixPath as Path
+import posixpath
 
 
 class Emulator:
@@ -63,43 +63,57 @@ class Emulator:
 
                     self.file_system[normalized_path] = True
 
-                    path_obj = Path(normalized_path)
+                    normalized_path = posixpath.normpath(normalized_path)
 
-                    if normalized_path.endswith('/'):
+                    if file.endswith('/'):
                         # Это директория
-                        self.directories.add(str(path_obj))
+                        self.directories.add(normalized_path)
                     else:
                         # Это файл
-                        self.files.add(str(path_obj))
+                        self.files.add(normalized_path)
 
                         # Добавляем все родительские директории
-                        for parent in path_obj.parents:
-                            self.directories.add(str(parent))
+                        parent_path = posixpath.dirname(normalized_path)
+                        while parent_path != '/':
+                            self.directories.add(parent_path)
+                            parent_path = posixpath.dirname(parent_path)
+                        self.directories.add('/')  # Убедимся, что корень всегда присутствует
         else:
             print("Error: provided file is not a ZIP archive.")
+
+    def _get_full_path(self, path):
+        """
+        Помощник для получения нормализованного абсолютного пути.
+        """
+        if posixpath.isabs(path):
+            full_path = posixpath.normpath(path)
+        else:
+            combined_path = posixpath.join(self.current_directory, path)
+            full_path = posixpath.normpath(combined_path)
+
+        if full_path == '':
+            full_path = '/'
+
+        # Убедиться, что путь начинается с '/'
+        if not full_path.startswith('/'):
+            full_path = '/' + full_path
+
+        return full_path
 
     def ls(self, directory=None):
         """
         Команда 'ls' выводит список файлов и папок в указанной директории (или текущей, если аргумент не передан).
         """
         if directory:
-            path_obj = Path(directory)
-            if path_obj.is_absolute():
-                path = path_obj
-            else:
-                path = (Path(self.current_directory) / path_obj)
+            path = self._get_full_path(directory)
         else:
-            path = Path(self.current_directory)
-
-        str_path = str(path)
-        if str_path == '':
-            str_path = '/'
+            path = self.current_directory
 
         entries = set()
-        dir_prefix = str_path if str_path != '/' else ''
+        dir_prefix = path if path != '/' else ''
         dir_prefix += '/'
-
         len_prefix = len(dir_prefix)
+
         # Ищем непосредственных потомков в директориях
         for d in self.directories:
             if d.startswith(dir_prefix):
@@ -128,28 +142,23 @@ class Emulator:
 
         :param path: Путь к новой директории
         """
+        if path == '':
+            response = "Error: path cannot be empty."
+            print(response)
+            return response
+
         if path == "..":
             # Переход на уровень выше
-            new_directory = Path(self.current_directory).parent
-            if str(new_directory) == '':
-                new_directory = Path('/')
-        else:
-            # Переход в указанную директорию
-            path_obj = Path(path)
-            if path_obj.is_absolute():
-                new_directory = path_obj
-            else:
-                new_directory = Path(self.current_directory) / path_obj
+            if self.current_directory != '/':
+                self.current_directory = posixpath.dirname(self.current_directory)
+                if self.current_directory == '':
+                    self.current_directory = '/'
+            return ""
 
-        # Нормализуем путь
-        new_directory = new_directory
+        new_directory = self._get_full_path(path)
 
-        str_new_directory = str(new_directory)
-        if str_new_directory == '':
-            str_new_directory = '/'
-
-        if str_new_directory in self.directories:
-            self.current_directory = str_new_directory
+        if new_directory in self.directories:
+            self.current_directory = new_directory
         else:
             response = "Error: directory not found."
             print(response)
@@ -159,7 +168,7 @@ class Emulator:
     def rmdir(self, path=None):
         """
         Команда 'rmdir' удаляет директорию, если она пуста.
-        Если в директории есть файлы, будет выбита ошибка.
+        Если в директории есть файлы, будет выброшена ошибка.
         Если аргумент не передан, выводится сообщение об ошибке.
         """
         if path is None:
@@ -167,22 +176,25 @@ class Emulator:
             print(response)
             return response
 
-        full_path = (Path(self.current_directory) / path).resolve()
-        str_full_path = str(full_path)
-        if str_full_path == '':
-            str_full_path = '/'
+        full_path = self._get_full_path(path)
+
+        # Проверяем, что это не корневая директория
+        if full_path == '/':
+            response = "Error: cannot remove root directory."
+            print(response)
+            return response
 
         # Проверяем, есть ли в директории другие файлы или директории
         has_entries = any(
-            f != str_full_path and f.startswith(str_full_path + '/')
+            (f != full_path and f.startswith(full_path + '/'))
             for f in self.files.union(self.directories)
         )
 
         if has_entries:
             response = f"Error: directory '{path}' is not empty. Remove all files inside first."
-        elif str_full_path in self.directories:
-            self.directories.remove(str_full_path)
-            self._remove_from_zip(str_full_path)  # Удаляем директорию из ZIP-архива
+        elif full_path in self.directories:
+            self.directories.remove(full_path)
+            self._remove_from_zip(full_path)  # Удаляем директорию из ZIP-архива
             response = f"Directory '{path}' has been removed."
         else:
             response = "Error: directory not found."
@@ -200,7 +212,8 @@ class Emulator:
                 for item in zip_ref.infolist():
                     # Проверяем, что файл или папка не совпадают с удаляемым
                     normalized_item = '/' + item.filename.lstrip('/')
-                    if not normalized_item.startswith(file_to_remove + '/'):
+                    normalized_item = posixpath.normpath(normalized_item)
+                    if not (normalized_item == file_to_remove or normalized_item.startswith(file_to_remove + '/')):
                         new_zip.writestr(item, zip_ref.read(item.filename))
         # Заменяем старый архив новым
         os.replace(temp_zip, self.zip_path)
@@ -279,7 +292,8 @@ class EmulatorGUI:
         # Получаем результат команды из эмулятора
         output = self.execute_command(command)
         with open(self.emulator.log_path, 'a') as log_file:
-            log_file.write(f"{output}\n")
+            if output:
+                log_file.write(f"{output}\n")
         # Обновляем область вывода
 
         self.host_display.config(
@@ -301,7 +315,7 @@ class EmulatorGUI:
             else:
                 return self.emulator.ls()
         elif command.startswith("cd "):
-            return self.emulator.cd(command.split(" ")[1])
+            return self.emulator.cd(command[3:])
         elif command == "cd":
             return self.emulator.cd('/')
         elif command.startswith("rmdir"):
@@ -324,7 +338,7 @@ class EmulatorGUI:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Описание вашей программы')
+    parser = argparse.ArgumentParser(description='Эмулятор файловой системы')
 
     parser.add_argument('--username', type=str, default='user1', help='Имя пользователя')
     parser.add_argument('--hostname', type=str, default='my_pc', help='Имя хоста')
