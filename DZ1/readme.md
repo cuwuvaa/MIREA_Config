@@ -1,4 +1,4 @@
-usage: emul.py [-h] [--username USERNAME] [--hostname HOSTNAME] [--zip-path ZIP_PATH] [--log-path LOG_PATH]
+usage: emul.py [-h] [--username USERNAME] [--hostname HOSTNAME] [--zip-path ZIP_PATH.zip] [--log-path LOG_PATH.log]
 
 Описание вашей программы
 
@@ -9,7 +9,7 @@ options:
   --zip-path ZIP_PATH  Путь к zip-файлу
   --log-path LOG_PATH  Путь к файлу логов
 
-default: user1 my_pc virtual_fs.zip emulator_log.txt
+default: user1 my_pc virtual_fs.zip emulator.log
 
 ------------------------------------------------------------------------------------------------------------
 
