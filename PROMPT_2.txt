@@ -1,0 +1,1 @@
+./git_dependency_visualizer.py plantuml ~/amneziawg-go
