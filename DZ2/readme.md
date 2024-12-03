@@ -2,4 +2,4 @@
 
 *чтобы запустить программу, переходим в репозиторий с py файлом, и вводим это в промпт (вне зависимости, png или svg)*
 
-'./git_dependency_visualizer.py plantuml ~/amneziawg-go'
+`./git_dependency_visualizer.py plantuml ~/amneziawg-go`
