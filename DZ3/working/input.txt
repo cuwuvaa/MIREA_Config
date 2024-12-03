@@ -1,17 +1,17 @@
-var x 42
-var y 54
+var x := 42;
 
+var y := begin
+    a := 1;
+    b := 2;
+end;
+
+var z
 
 begin
-a := 1;
-b := 2;
-t := 12;
-z := 38;
-c := begin
-    d := #[x];
-    g := #[x];
-    ge := begin
-    r := #[y];
-    end; 
-end;
+    key1 := #[x];
+    key2 := #[y];
+    key3 := begin
+        subkey := #[x];
+        subkey2 := 39;
+    end;
 end

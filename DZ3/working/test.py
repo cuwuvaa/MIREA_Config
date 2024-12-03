@@ -70,27 +70,54 @@ class Parser:
                 result = self.parse_dict()
                 results.append(result)
             else:
+                # Должно быть значение или выражение
+                value = self.parse_value(line)
+                results.append(value)
                 self.advance()
         return results
 
     def parse_variable_declaration(self):
         line = self.current_line()
-        match = re.match(r'^var\s+([a-z][a-z0-9_]*)\s+(.+)$', line.strip())
+        match = re.match(r'^var\s+([a-z][a-z0-9_]*)\s*(:=)?\s*(.*)$', line.strip())
         if match:
             var_name = match.group(1).strip()
-            var_value_str = match.group(2).strip()
-            try:
-                var_value = self.parse_value(var_value_str)
-                self.variables[var_name] = var_value
+            # Проверяем, есть ли оператор присваивания ':='
+            if match.group(2):
+                remaining_str = match.group(3).strip()
+                if remaining_str.rstrip(';') in ('begin', 'begin;'):
+                    if remaining_str.endswith(';'):
+                        self.advance()  # Перейти после 'var name := begin;'
+                    else:
+                        self.advance()  # Перейти после 'var name := begin'
+                    var_value = self.parse_dict(expect_begin=False)
+                    self.variables[var_name] = var_value
+                else:
+                    # Собираем значение до ';'
+                    value_str = remaining_str
+                    while not value_str.endswith(';'):
+                        self.advance()
+                        line = self.current_line()
+                        if line is None:
+                            raise ValueError(f"Ожидается ';' в конце присваивания на строке {self.position + 1}")
+                        value_str += ' ' + line.strip()
+                    # Убираем ';' в конце
+                    value_str = value_str[:-1].strip()
+                    self.advance()  # Переходим на следующую строку после ';'
+                    var_value = self.parse_value(value_str)
+                    self.variables[var_name] = var_value
+            else:
+                # Нет оператора присваивания, переменная без значения
+                self.variables[var_name] = None
                 self.advance()
-            except ValueError as e:
-                raise ValueError(f"Ошибка в строке {self.position + 1}: {e}")
         else:
             raise ValueError(f"Синтаксическая ошибка в строке {self.position + 1}: {line}")
 
     def parse_value(self, value_str):
         value_str = value_str.strip()
-        if value_str.isdigit():
+        if value_str == 'begin':
+            value = self.parse_dict()
+            return value
+        elif re.match(r'^\d+$', value_str):
             return int(value_str)
         elif value_str.startswith('#[') and value_str.endswith(']'):
             var_name = value_str[2:-1].strip()
@@ -135,15 +162,15 @@ class Parser:
         name = assignment_match.group(1)
         remaining_str = assignment_match.group(2).strip()
         if remaining_str.rstrip(';') in ('begin', 'begin;'):
-            # Value is a dict
+            # Значение является словарём
             if remaining_str.endswith(';'):
-                self.advance()  # Move past the 'name := begin;' line
+                self.advance()  # Переходим после 'name := begin;'
             else:
-                self.advance()  # Move past the 'name := begin' line
+                self.advance()  # Переходим после 'name := begin'
             value = self.parse_dict(expect_begin=False)
             return name, value
         else:
-            # Build up 'value_str' until we find a line ending with ';'
+            # Собираем значение до ';'
             value_str = remaining_str
             while not value_str.endswith(';'):
                 self.advance()
@@ -151,9 +178,9 @@ class Parser:
                 if line is None:
                     raise ValueError(f"Ожидается ';' в конце присваивания на строке {self.position + 1}")
                 value_str += ' ' + line.strip()
-            # Remove the trailing ';'
+            # Убираем ';' в конце
             value_str = value_str[:-1].strip()
-            self.advance()  # Move past the last line of the assignment
+            self.advance()  # Переходим на следующую строку после ';'
             value = self.parse_value(value_str)
             return name, value
 
