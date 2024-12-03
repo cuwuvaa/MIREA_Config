@@ -1,0 +1,17 @@
+var x 42
+var y 54
+
+
+begin
+a := 1;
+b := 2;
+t := 12;
+z := 38;
+c := begin
+    d := #[x];
+    g := #[x];
+    ge := begin
+    r := #[y];
+    end; 
+end;
+end
