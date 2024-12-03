@@ -21,7 +21,8 @@ run: `cuwuvaa@HP:/mnt/c/users/ivank/desktop/УНИК/config/DZ1$`
 
 output:
 
-`'Error: directory not found.
+```
+'Error: directory not found.
 file4.txt
 folder1
 folder2
@@ -30,7 +31,8 @@ folder2
 subfolder1
 .Directory 'empty_folder' has been removed.
 .Error: directory 'folder1' is not empty. Remove all files inside first.
-.Error: directory not found.`
+.Error: directory not found.
+```
 
 ----------------------------------------------------------------------
 `Ran 13 tests in 0.248s`
