@@ -1,5 +1,5 @@
 **usage:**
-`emul.py [-h] [--username USERNAME] [--hostname HOSTNAME] [--zip-path ZIP_PATH.zip] [--log-path LOG_PATH.log]'`
+`emul.py [-h] [--username USERNAME] [--hostname HOSTNAME] [--zip-path ZIP_PATH.zip] [--log-path LOG_PATH.log]`
 
 Описание вашей программы
 
