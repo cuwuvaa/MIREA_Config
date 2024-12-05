@@ -4,4 +4,6 @@
 
 **пример:**
 
+# тест
+
 ```python3 dz3.py -i input.cfg -o output.json```
