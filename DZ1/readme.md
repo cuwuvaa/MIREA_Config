@@ -14,6 +14,73 @@ default: user1 my_pc virtual_fs.zip emulator.log
 
 ------------------------------------------------------------------------------------------------------------
 
+![alt text](https://github.com/cuwuvaa/MIREA_Config/blob/main/DZ1/screens/1.png)
+
+![alt text](https://github.com/cuwuvaa/MIREA_Config/blob/main/DZ1/screens/2.png)
+
+![alt text](https://github.com/cuwuvaa/MIREA_Config/blob/main/DZ1/screens/3.png)
+
+
+```log
+cuwuvaa@hp:/$ ls
+virtual_fs
+cuwuvaa@hp:/$ cd virtual_Fs
+Error: directory not found.
+cuwuvaa@hp:/$ exit
+Exiting emulator...
+cuwuvaa@hp:/$ ls
+virtual_fs
+cuwuvaa@hp:/$ cd virtual_fs
+cuwuvaa@hp:/virtual_fs$ ls
+testdir
+cuwuvaa@hp:/virtual_fs$ cd testdir
+cuwuvaa@hp:/virtual_fs/testdir$ ls
+home
+cuwuvaa@hp:/virtual_fs/testdir$ cd home
+cuwuvaa@hp:/virtual_fs/testdir/home$ ls
+cuwuvaa
+other
+cuwuvaa@hp:/virtual_fs/testdir/home$ cd cuwuvaa
+cuwuvaa@hp:/virtual_fs/testdir/home/cuwuvaa$ ls
+videos
+cuwuvaa@hp:/virtual_fs/testdir/home/cuwuvaa$ cd videos
+cuwuvaa@hp:/virtual_fs/testdir/home/cuwuvaa/videos$ ls
+insta
+tg
+youtube
+cuwuvaa@hp:/virtual_fs/testdir/home/cuwuvaa/videos$ rmdir tg
+Directory 'tg' has been removed.
+cuwuvaa@hp:/virtual_fs/testdir/home/cuwuvaa/videos$ ls
+insta
+youtube
+cuwuvaa@hp:/virtual_fs/testdir/home/cuwuvaa/videos$ cd tg
+Error: directory not found.
+cuwuvaa@hp:/virtual_fs/testdir/home/cuwuvaa/videos$ cd ..
+cuwuvaa@hp:/virtual_fs/testdir/home/cuwuvaa$ cd ..
+cuwuvaa@hp:/virtual_fs/testdir/home$ ls
+cuwuvaa
+other
+cuwuvaa@hp:/virtual_fs/testdir/home$ cd other
+cuwuvaa@hp:/virtual_fs/testdir/home/other$ ls
+Directory is empty.
+cuwuvaa@hp:/virtual_fs/testdir/home/other$ uname
+Linux
+cuwuvaa@hp:/virtual_fs/testdir/home/other$ cd ..
+cuwuvaa@hp:/virtual_fs/testdir/home$ cd ..
+cuwuvaa@hp:/virtual_fs/testdir$ cd ..
+cuwuvaa@hp:/virtual_fs$ cd ..
+cuwuvaa@hp:/$ cd ..
+cuwuvaa@hp:/$ ls
+virtual_fs
+cuwuvaa@hp:/$ cd ..
+cuwuvaa@hp:/$ cd ......
+Error: directory not found.
+cuwuvaa@hp:/$ ls
+virtual_fs
+cuwuvaa@hp:/$ exit
+Exiting emulator...
+```
+
 test:
 
 run: `cuwuvaa@HP:/mnt/c/users/ivank/desktop/УНИК/config/DZ1$`
