@@ -4,5 +4,6 @@
 
 ```./git_dependency_visualizer.py plantuml ~/amneziawg-go```
 
+![SVG файл](https://github.com/cuwuvaa/MIREA_Config/blob/main/DZ2/CONFIG2_PNG/dependency_graph.svg)
 
 ![pngscreen](https://github.com/cuwuvaa/MIREA_Config/blob/main/DZ2/CONFIG2_PNG/dependency_graph.png)
