@@ -3,3 +3,6 @@
 *чтобы запустить программу, переходим в репозиторий с py файлом, и вводим это в промпт (вне зависимости, png или svg)*
 
 ```./git_dependency_visualizer.py plantuml ~/amneziawg-go```
+
+
+![pngscreen](https://github.com/cuwuvaa/MIREA_Config/blob/main/DZ2/CONFIG2_PNG/dependency_graph.png)
