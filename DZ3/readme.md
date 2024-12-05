@@ -1,7 +1,7 @@
-для запуска на wsl (linux):
+# Для запуска на wsl (linux):
 
-`python3 dz3.py [-h] -i INPUT -o OUTPUT`
+```python3 dz3.py [-h] -i INPUT -o OUTPUT```
 
-пример:
+**пример:**
 
-`python3 dz3.py -i input.cfg -o output.json`
+```python3 dz3.py -i input.cfg -o output.json```
