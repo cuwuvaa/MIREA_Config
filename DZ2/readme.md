@@ -9,6 +9,6 @@ PNG Файл:
 
 SVG Файл: (ниже)
 
-![SVG файл](https://github.com/cuwuvaa/MIREA_Config/blob/main/DZ2/CONFIG2_SVG/dependency_graph.svg)
+[SVG файл](https://github.com/cuwuvaa/MIREA_Config/blob/main/DZ2/CONFIG2_SVG/dependency_graph.svg)
 
 
