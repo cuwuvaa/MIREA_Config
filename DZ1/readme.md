@@ -1,8 +1,6 @@
-**usage:**
-`emul.py [-h] [--username USERNAME] [--hostname HOSTNAME] [--zip-path ZIP_PATH.zip] [--log-path LOG_PATH.log]`
 
-Описание программы
-
+# Описание программы
+```
 options:
   -h, --help           show this help message and exit
   --username USERNAME  Имя пользователя
@@ -11,8 +9,12 @@ options:
   --log-path LOG_PATH  Путь к файлу логов
 
 default: user1 my_pc virtual_fs.zip emulator.log
+```
 
-------------------------------------------------------------------------------------------------------------
+## Запуск:
+
+```emul.py [-h] [--username USERNAME] [--hostname HOSTNAME] [--zip-path ZIP_PATH.zip] [--log-path LOG_PATH.log]```
+
 
 ![alt text](https://github.com/cuwuvaa/MIREA_Config/blob/main/DZ1/screens/1.png)
 
@@ -20,8 +22,9 @@ default: user1 my_pc virtual_fs.zip emulator.log
 
 ![alt text](https://github.com/cuwuvaa/MIREA_Config/blob/main/DZ1/screens/3.png)
 
+**Log**
 
-```log
+```
 cuwuvaa@hp:/$ ls
 virtual_fs
 cuwuvaa@hp:/$ cd virtual_Fs
@@ -81,12 +84,11 @@ cuwuvaa@hp:/$ exit
 Exiting emulator...
 ```
 
-test:
+## Test:
 
-run: `cuwuvaa@HP:/mnt/c/users/ivank/desktop/УНИК/config/DZ1$`
-`python3 test_emulator.py`
+**run:** ```cuwuvaa@HP:/mnt/c/users/ivank/desktop/УНИК/config/DZ1$```
 
-output:
+**output** :
 
 ```
 'Error: directory not found.
@@ -105,7 +107,8 @@ subfolder1
 `Ran 13 tests in 0.248s`
 OK
 
-code:
+# Code:
+
 ```
 import os
 import zipfile
